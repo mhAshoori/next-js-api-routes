@@ -1,22 +1,37 @@
 //import fs from 'fs'
 
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
+//import {  } from "react/cjs/react.development";
 import { Fragment } from "react/cjs/react.production.min";
 import { buildFeedbackPath, extractFeedback } from "../api/feedback";
 function FeedbackPage(props) {
+  const [feedbackData, setFeedbackData] = useState();
+  function loadFeedbackHandler(id) {
+    fetch(`/api/${id}`)
+      .then((response) =>  response.json() )
+      .then((data) => {
+       // console.log(data+'the id is '+id);
+        setFeedbackData(data.feedback);
+      });
+    // console.log(feedbackData);
+  }
   useEffect(() => {
-    console.log(props);
-  }, []);
+    // console.log(feedbackData)
+  }, [feedbackData]);
+
   return (
     <Fragment>
       <h1>Feedbacks</h1>
+      {feedbackData && <h2>{feedbackData.email}</h2>}
       <ul>
         {props.feedbackItems.map((item) => (
-          <div key={item.id}>
-            <li>{item.email}</li>
-            <li>{item.text}</li>
+          <li key={item.id}>
+            {item.text}
             <br />
-          </div>
+            <button onClick={loadFeedbackHandler.bind(null, item.id)}>
+              Show Details
+            </button>
+          </li>
         ))}
       </ul>
     </Fragment>
